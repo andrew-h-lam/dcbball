@@ -30,7 +30,7 @@
 
     <header class="header dark-bg">
         <!--logo start-->
-        <a href="home" class="logo">Datacare <span class="lite">Basketball</span></a>
+        <a href="standings" class="logo">Datacare <span class="lite">Basketball</span></a>
         <!--logo end-->
         <div class="top-nav notification-row"></div>
     </header>
@@ -45,16 +45,17 @@
                         <span>Standings</span>
                     </a>
                 </li>
-                <li>
-                    <a class="" href="lineups">
-                        <i class="icon_table"></i>
-                        <span>3-Man Lineups</span>
-                    </a>
-                </li>
+
                 <li>
                     <a class="" href="games">
                         <i class="icon_document_alt"></i>
                         <span>Game Log</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="" href="lineups">
+                        <i class="icon_table"></i>
+                        <span>3-Man Lineups</span>
                     </a>
                 </li>
                 <li>
@@ -75,14 +76,14 @@
             <!--overview start-->
             <div class="row">
                 <div class="col-lg-12">
-                    <h3 class="page-header"><?php echo $title; ?></h3>
+                    <h3 class="page-header"><?php if(isset($title)) echo $title; ?></h3>
                 </div>
             </div>
 
             <div class="row">
 
                 <div class="col-lg-9 col-md-12">
-                        <?php echo $table; ?><input type="hidden" name="blank" value="">
+                        <?php if(isset($table)) echo $table; ?><input type="hidden" name="blank" value="">
                 </div><!--/col-->
             </div><br><br>
         </section>
