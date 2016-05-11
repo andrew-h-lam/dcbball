@@ -5,8 +5,20 @@ class Games extends CI_Controller {
     // FixMe: link to games to edit them
     function index() {
 
-        if(isset($_POST['year'])) $year = $_POST['year'];
-        else $year = date("Y");
+        $this->load->helper("misc");
+        $this->load->library('session');
+
+        if(isset($_POST['year'])) {
+            $year = $_POST['year'];
+        }
+        else if(isset($this->session->userdata['year'])) {
+            $year = $this->session->userdata['year'];
+        }
+        else {
+            $year = data("Y");
+        }
+
+        $this->session->set_userdata('year', $year);
 
         $this->load->model('games_model');
         $data = array(
@@ -14,7 +26,6 @@ class Games extends CI_Controller {
         );
 
         // move to view??
-        $this->load->helper("misc");
         $this->load->library('table');
         $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="3" cellspacing="2" class="mytable">' );
         $this->table->set_template($tmpl);

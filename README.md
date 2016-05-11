@@ -1,10 +1,11 @@
 To Do
-- Sortable lineups
+- Sortable standings
 - Sortable lineups
 - Create game
 - Edit game
 - Fix create game dropdown
 - Remove repeated code
-- Store year global
 - Clean up assets
 - Add 1-week change
+- Fix bug with lineups
+- Put setYear module in a function

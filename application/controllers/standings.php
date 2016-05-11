@@ -5,11 +5,23 @@ class Standings extends CI_Controller {
 
     public function index() {
 
-        if(isset($_POST['year'])) $year = $_POST['year'];
-        else $year = date("Y");
-
         $this->load->model('games_model');
         $this->load->model('players_model');
+        $this->load->helper("misc");
+        $this->load->library('session');
+
+        if(isset($_POST['year'])) {
+            $year = $_POST['year'];
+        }
+        else if(isset($this->session->userdata['year'])) {
+            $year = $this->session->userdata['year'];
+        }
+        else {
+            $year = data("Y");
+        }
+
+        $this->session->set_userdata('year', $year);
+
         $players = $this->players_model->get_players(1);
 
         $this->load->library('table');

@@ -5,13 +5,23 @@ class Lineups extends CI_Controller {
 
     function index() {
 
-        if(isset($_POST['year'])) $year = $_POST['year'];
-        else $year = date("Y");
-
-        $this->load->helper("misc");
         $this->load->model('games_model');
         $this->load->model('players_model');
         $this->load->library('table');
+        $this->load->helper("misc");
+        $this->load->library('session');
+
+        if(isset($_POST['year'])) {
+            $year = $_POST['year'];
+        }
+        else if(isset($this->session->userdata['year'])) {
+            $year = $this->session->userdata['year'];
+        }
+        else {
+            $year = data("Y");
+        }
+
+        $this->session->set_userdata('year', $year);
 
         $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="2" id="lineups" class="lineups">' );
         $this->table->set_template($tmpl);
