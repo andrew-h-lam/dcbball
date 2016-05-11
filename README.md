@@ -1,7 +1,9 @@
-Wishlist
-- Add year dropdown to Game Log
-- Add year dropdown to 3-Man Lineup
+To Do
+- Fix Home bug
 - Make 3-Man Lineup sortable
 - Create game
 - Edit game
+- Remove repeated code
+- Store year global
 - Clean up assets
+
