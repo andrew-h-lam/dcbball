@@ -3,15 +3,18 @@
 class Games extends CI_Controller {
     // Shows game log
     // FixMe: link to games to edit them
-    // FixMe: hardcoded year
     function index() {
+
+        if(isset($_POST['year'])) $year = $_POST['year'];
+        else $year = date("Y");
 
         $this->load->model('games_model');
         $data = array(
-            'all_games' => $this->games_model->get_games(2016)
+            'all_games' => $this->games_model->get_games($year)
         );
 
         // move to view??
+        $this->load->helper("misc");
         $this->load->library('table');
         $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="3" cellspacing="2" class="mytable">' );
         $this->table->set_template($tmpl);
@@ -22,7 +25,8 @@ class Games extends CI_Controller {
                implode("<BR>", $doc["winners"]),implode("<BR>",$doc["losers"]));
         }
 
-        $data['table'] = $this->table->generate();
+        $data['table'] = year_dropdown($year);
+        $data['table'] .= $this->table->generate();
         $data['title'] = "Game Log";
         $this->load->view('home', $data);
     }

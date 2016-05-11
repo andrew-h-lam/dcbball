@@ -77,11 +77,14 @@ class Games_model extends CI_Model {
         $names2 = array('losers' => $names[1]);
         $names3 = array('losers' => $names[2]);
 
-        $filter = array('$and' =>
-            [
+        $filter = array(
+                '$and' =>
+                [
                 $names1, $names2, $names3
-            ]
+                ],
+                'date' => $date_regex
         );
+
         $losses = $this->collection->count($filter);
 
         $arr["wins"] = $wins;

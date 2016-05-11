@@ -4,6 +4,11 @@
 class Lineups extends CI_Controller {
 
     function index() {
+
+        if(isset($_POST['year'])) $year = $_POST['year'];
+        else $year = date("Y");
+
+        $this->load->helper("misc");
         $this->load->model('games_model');
         $this->load->model('players_model');
         $this->load->library('table');
@@ -19,7 +24,7 @@ class Lineups extends CI_Controller {
             for($b=$a+1; $b<$len; $b++) {
                 for($c=$b+1; $c<$len; $c++) {
 
-                    $record = $this->games_model->get_lineup_wins_losses(array($players[$a],$players[$b],$players[$c]));
+                    $record = $this->games_model->get_lineup_wins_losses(array($players[$a],$players[$b],$players[$c]), $year);
                     $games_played = $record['wins'] + $record['losses'];
 
                     if($games_played >=5) {
@@ -37,7 +42,9 @@ class Lineups extends CI_Controller {
                 }
             }
         }
-        $data['table'] = $this->table->generate();
+
+        $data['table'] = year_dropdown($year);
+        $data['table'] .= $this->table->generate();
         $data['title'] = "3-Man Lineups";
         $this->load->view('home', $data);
         //$this->load->view('lineups', $data);
