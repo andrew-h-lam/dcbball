@@ -17,13 +17,12 @@ class Standings extends CI_Controller {
             $year = $this->session->userdata['year'];
         }
         else {
-            $year = data("Y");
+            $year = date("Y");
         }
 
         $this->session->set_userdata('year', $year);
 
         $players = $this->players_model->get_players(1);
-
         $this->load->library('table');
 
         $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="2" class="standings">',
@@ -35,20 +34,20 @@ class Standings extends CI_Controller {
         $this->table->set_template($tmpl); 
         $this->table->set_heading('Name', 'Wins', 'Losses', 'GP', '%', "P/M", "P/M <br> Per Game",
             "Last <br> 10", "Current <br> Streak","Longest <br> Win Streak", "Longest <br> Lose Streak", "Last <br> Played");
-
         sort($players);
         // go through player list and determine stats
-        foreach($players as $id => $name) {
+        foreach($players as $player) {
 
-            $games = $this->games_model->get_player_games($name, $year);
+            $name = $player['firstName'] . " " . $player['lastName'];
+            $games = $this->games_model->get_player_games($year, $player['id']);
             $this->load->helper('misc');
-
             // initialize variables
             $this->wins = 0;
             $this->losses = 0;
             $this->pm = 0;
             $this->prev_week_pm = 0;
             $this->process_game_info($games, $name);
+
             $wins = $this->wins;
             $losses = $this->losses;
             $pm = $this->pm;
@@ -63,8 +62,8 @@ class Standings extends CI_Controller {
             else $color = 'black';
             $pm_per_game = "<font color='$color'>" . $pm_per_game . "</font>";
 
-            $l10 = $this->games_model->get_last_ten($name); // calc in process_game_info function
-
+            #$l10 = $this->games_model->get_last_ten($name); // calc in process_game_info function
+            $l10 = "0-0";
             $currentStreak= $this->currentStreak;
             $longestWinStreak = $this->longestWinStreak;
             $longestLoseStreak = $this->longestLoseStreak;
@@ -92,8 +91,8 @@ class Standings extends CI_Controller {
         // for each player's set of games, calculate their stats
         foreach ($games as $id => $game) {
 
-            $this->last_played = $game['date'];
-            if(in_array($name, $game['winners'])) {
+            $this->last_played = $game['gameDate'];
+            if($game['result' ] == "W") {
 
                 $this->wins++;
                 $this->pm += $game['winScore'] - $game['lossScore'];
@@ -102,7 +101,7 @@ class Standings extends CI_Controller {
                 if($currentWinStreak > $longestWinStreak ) $longestWinStreak = $currentWinStreak;
                 $currentResult = "W";
             }
-            else if(in_array($name, $game['losers'])) {
+            else if($game['result' ] == "L") {
 
                 $this->losses++;
                 $this->pm -= $game['winScore'] - $game['lossScore'];

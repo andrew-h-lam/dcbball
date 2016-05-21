@@ -15,7 +15,7 @@ class Games extends CI_Controller {
             $year = $this->session->userdata['year'];
         }
         else {
-            $year = data("Y");
+            $year = date("Y");
         }
 
         $this->session->set_userdata('year', $year);
@@ -32,7 +32,7 @@ class Games extends CI_Controller {
         $this->table->set_heading('Game#', 'Game Date','Score', 'Winning Team', 'Losing Team');
 
         foreach($data['all_games'] as $doc) {
-           $this->table->add_row($doc["_id"],$doc["date"], $doc["winScore"]. "-" . $doc["lossScore"],
+           $this->table->add_row($doc["id"],$doc["gameDate"], $doc["winScore"]. "-" . $doc["lossScore"],
                implode("<BR>", $doc["winners"]),implode("<BR>",$doc["losers"]));
         }
 
