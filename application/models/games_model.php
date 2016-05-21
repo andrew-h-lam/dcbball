@@ -9,48 +9,80 @@ class Games_model extends CI_Model {
     // FixMe: create function to generate Mongo where clauses
     public function __construct() {
         parent::__construct();
-        //$this->load->database();
-        $this->db = new MongoClient();
-        $this->collection = $this->db->dcbball->games;
+        $this->load->database();
+        #$this->db = new MongoClient();
+        #$this->collection = $this->db->dcbball->games;
 
     }
 
     // get all games for a given year for game log; returns assoc array with game id as index
-    public function get_games($year = null) {
+    public function get_games($year = null, $playerid = null) {
 
         if($year == null) {
             $year = date("Y");
         }
-        $date_regex = new MongoRegex("/^$year/i");
 
-        $cursor = $this->collection->find(array('date' => $date_regex));
-        $cursor->sort(array('_id'=>1));
-        $results = array();
-        foreach ( $cursor as $id => $value ) {
-            $results[$id] = $value;
+        $playerid_clause = '';
+        if($playerid != null) {
+            $playerid_clause = " and players.id = $playerid";
         }
 
-        return $results;
+        $this->db->select("lastName, firstName, games.id, gameDate, winScore, lossScore, result");
+        $this->db->from("games join playerGame on gameID = games.id join players on players.id = playerID");
+        $this->db->where("gameDate like '" . $year . "%' $playerid_clause");
+        $this->db->order_by('games.id, result', 'DESC');
+
+        $res = $this->db->get()->result_array();
+
+        $res_size = sizeof($res);
+        $results_arr = array();
+        for($i=0; $i<$res_size; $i++) {
+
+            $game_id = $res[$i]['id'];
+            $results_arr[$game_id]['id'] = $game_id;
+            $results_arr[$game_id]['gameDate'] = $res[$i]['gameDate'];
+            $results_arr[$game_id]['winScore'] = $res[$i]['winScore'];
+            $results_arr[$game_id]['lossScore'] = $res[$i]['lossScore'];
+            $fullname =  $res[$i]['firstName'] . " " . $res[$i]['lastName'];
+            if($res[$i]['result'] == "W") $results_arr[$game_id]["winners"][] = $fullname;
+            else $results_arr[$game_id]["losers"][] = $fullname;
+
+        }
+
+        return $results_arr;
     }
 
-    // get all game info for a particular player; returns assoc array with game id as index
-    public function get_player_games($name, $year = null) {
+    // get all games for a given year for game log; returns assoc array with game id as index
+    public function get_player_games($year = null, $playerid = null) {
 
         if($year == null) {
             $year = date("Y");
         }
 
-        $date_regex = new MongoRegex("/^$year/i");
-
-        $filter = $this->filter_by_name_and_year($name, $date_regex);
-
-        $cursor = $this->collection->find($filter);
-        $cursor->sort(array('_id'=>1));
-        $results = array();
-        foreach ( $cursor as $id => $value ) {
-            $results[$id] = $value;
+        $playerid_clause = '';
+        if($playerid != null) {
+            $playerid_clause = " and players.id = $playerid";
         }
-        return $results;
+
+        $this->db->select("lastName, firstName, games.id, gameDate, winScore, lossScore, result");
+        $this->db->from("games join playerGame on gameID = games.id join players on players.id = playerID");
+        $this->db->where("gameDate like '" . $year . "%' $playerid_clause");
+        $this->db->order_by('games.id, result', 'DESC');
+
+        $res = $this->db->get()->result_array();
+        $res_size = sizeof($res);
+        $results_arr = array();
+        for($i=0; $i<$res_size; $i++) {
+
+            $game_id = $res[$i]['id'];
+            $results_arr[$game_id]['id'] = $game_id;
+            $results_arr[$game_id]['gameDate'] = $res[$i]['gameDate'];
+            $results_arr[$game_id]['winScore'] = $res[$i]['winScore'];
+            $results_arr[$game_id]['lossScore'] = $res[$i]['lossScore'];
+            $results_arr[$game_id]['result'] =  $res[$i]['result'];
+        }
+
+        return $results_arr;
     }
 
     // FixMe: change to handle 3, 4, or 5 names
@@ -191,7 +223,6 @@ class Games_model extends CI_Model {
             $game[$i] = $v;
         }
         $game["_id"] =$max_game_id + 1;
-        //echo "<pre>" . print_r($game,true) . "</pre>";
 
         //$collection->insert($game);
         // insert into mysql as well for sanity check
