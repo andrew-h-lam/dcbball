@@ -43,6 +43,9 @@ class Games extends CI_Controller {
     }
 
     function form() {
+        $this->load->model('players_model');
+
+        $data['players'] = $this->players_model->get_players(1);
 
         if($_POST) {
             $data['table'] = 'Game Created';
@@ -50,30 +53,11 @@ class Games extends CI_Controller {
             $this->games_model->insert_game($_POST); // FixMe: pass $_POST?
         }
         else {
-            $data['table'] = $this->load->view('game_form', '', true);
+            $data['table'] = $this->load->view('game_form', $data, true);
         }
 
         $data['title'] = "Add Game";
         $this->load->view('home',$data);
     }
-
-
-    // FixMe
-    // Create game
-    /*function create() {
-	    $this->load->helper(array('form', 'url'));
-
-	    $this->load->library('form_validation');
-
-	    if ($this->form_validation->run() == FALSE) {
-	        $this->load->model('players_model');
-         //   $data['all_players'] = $this->players_model->get_all_players();
-            $data['table'] = [];
-            $this->load->view('home',$data);
-	    }
-	    else {
-	      //  $this->load->view('entergamesuccess');
-	    }
-    }*/
 }
 ?>

@@ -191,9 +191,9 @@ class Games_model extends CI_Model {
         $year = date("Y");
         $date_regex = new MongoRegex("/^$year/i");
 
-        $filter = $this->filter_by_name_and_year($name,$date_regex);
+       # $filter = $this->filter_by_name_and_year($name,$date_regex);
 
-        $cursor = $this->collection->find($filter);
+        $cursor = $this->collection->find();
         $cursor->limit(10);
         $cursor->sort(array('_id'=>-1));
         $wins = 0;
@@ -205,46 +205,30 @@ class Games_model extends CI_Model {
         return $wins . "-" . $losses;
     }
 
-    private function insert_game($data) {
+    public function insert_game($data) {
 
-        $collection = $this->db->mytest->test_collection;
+        if($data['gameDate'] && $data['winScore'] && $data['lossScore']) {
+            $sql = "INSERT INTO games (gameDate, winScore, lossScore)
+                    VALUES ('" . $data['gameDate'] . "','" . $data['winScore'] . "','" . $data['lossScore'] . "')";
+            echo $sql;
+            //$this->db->query($sql);
+            $game_id = $this->db->insert_id();
 
-        $game = array();
+            foreach($data['winners'] as $i => $v) {
+                $sql = "INSERT INTO playerGames (playerID, gameID, result)
+                    VALUES ($v, $game_id, 'W')";
+                echo $sql;
+            }
 
-        $cursor = $this->collection->find();
-        $cursor->limit(1);
-        $cursor->sort(array('_id'=>-1));
-
-        foreach ($cursor as $id => $value) {
-            $max_game_id = $id;
+            foreach($data['losers'] as $i => $v) {
+                $sql = "INSERT INTO playerGames (playerID, gameID, result)
+                    VALUES ($v, $game_id, 'W')";
+                echo $sql;
+            }
         }
-
-        foreach($data as $i => $v) {
-            $game[$i] = $v;
-        }
-        $game["_id"] =$max_game_id + 1;
-
-        //$collection->insert($game);
-        // insert into mysql as well for sanity check
     }
 
-    private function filter_by_name_and_year($name, $date) {
 
-        $filter =
-            array(
-                '$or' =>
-                    array(
-                        array('winners' => $name),
-                        array('losers' => $name)
-                    ),
-                '$and' =>
-                    array(
-                        array('date' => $date)
-                    )
-            );
-
-        return $filter;
-    }
 }
 
 ?>
