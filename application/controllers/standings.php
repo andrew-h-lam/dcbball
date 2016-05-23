@@ -46,12 +46,14 @@ class Standings extends CI_Controller {
             $this->losses = 0;
             $this->pm = 0;
             $this->prev_week_pm = 0;
+            $this->l10 = "0-0";
             $this->process_game_info($games, $name);
 
             $wins = $this->wins;
             $losses = $this->losses;
             $pm = $this->pm;
             $last_played = $this->last_played;
+            $l10 = $this->l10;
 
             $games_played = $wins + $losses;
             if($games_played == 0) continue;
@@ -62,8 +64,6 @@ class Standings extends CI_Controller {
             else $color = 'black';
             $pm_per_game = "<font color='$color'>" . $pm_per_game . "</font>";
 
-            #$l10 = $this->games_model->get_last_ten($name); // calc in process_game_info function
-            $l10 = "0-0";
             $currentStreak= $this->currentStreak;
             $longestWinStreak = $this->longestWinStreak;
             $longestLoseStreak = $this->longestLoseStreak;
@@ -87,9 +87,12 @@ class Standings extends CI_Controller {
         $longestWinStreak = 0;
         $currentLoseStreak = 0;
         $longestLoseStreak = 0;
-
+        $num_games = sizeof($games);
+        $l10_w = 0;
+        $l10_l = 0;
         // for each player's set of games, calculate their stats
         foreach ($games as $id => $game) {
+
 
             $this->last_played = $game['gameDate'];
             if($game['result' ] == "W") {
@@ -100,6 +103,9 @@ class Standings extends CI_Controller {
                 if($currentResult == "L" || $currentResult == "") $currentLoseStreak = 0;
                 if($currentWinStreak > $longestWinStreak ) $longestWinStreak = $currentWinStreak;
                 $currentResult = "W";
+                if($num_games <= 10) $l10_w++;
+                else $num_games--;
+
             }
             else if($game['result' ] == "L") {
 
@@ -109,9 +115,12 @@ class Standings extends CI_Controller {
                 if($currentResult == "W" || $currentResult == "") $currentWinStreak = 0;
                 if($currentLoseStreak > $longestLoseStreak ) $longestLoseStreak = $currentLoseStreak;
                 $currentResult = "L";
+                if($num_games <= 10) $l10_l++;
+                else $num_games--;
             }
         }
 
+        $this->l10 = $l10_w . "-" . $l10_l;
         $this->longestWinStreak = $longestWinStreak;
         $this->longestLoseStreak = $longestLoseStreak;
         if($currentResult == "W") $this->currentStreak = $currentResult . $currentWinStreak;
