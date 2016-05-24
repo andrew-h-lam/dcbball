@@ -1,11 +1,12 @@
 To Do
 - Sortable standings
 - Sortable lineups
-- Create game
 - Edit game
-- Fix create game dropdown
 - Remove repeated code
 - Clean up assets
 - Add 1-week change
-- Fix bug with lineups
+- Fix lineups
 - Put setYear module in a function
+- Series Matchups
+- Onclick grey out other names on form
+- Clean up game create

@@ -185,45 +185,25 @@ class Games_model extends CI_Model {
         return $plus_minus;
     }
 
-    // get record for last ten games
-    public function get_last_ten($name) {
-
-        $year = date("Y");
-        $date_regex = new MongoRegex("/^$year/i");
-
-       # $filter = $this->filter_by_name_and_year($name,$date_regex);
-
-        $cursor = $this->collection->find();
-        $cursor->limit(10);
-        $cursor->sort(array('_id'=>-1));
-        $wins = 0;
-        $losses = 0;
-        foreach ($cursor as $id => $value ) {
-            if(in_array($name, $value['winners'])) $wins++;
-            else if(in_array($name, $value['losers'])) $losses++;
-        }
-        return $wins . "-" . $losses;
-    }
-
     public function insert_game($data) {
 
         if($data['gameDate'] && $data['winScore'] && $data['lossScore']) {
             $sql = "INSERT INTO games (gameDate, winScore, lossScore)
                     VALUES ('" . $data['gameDate'] . "','" . $data['winScore'] . "','" . $data['lossScore'] . "')";
-            echo $sql;
-            //$this->db->query($sql);
+
+            $this->db->query($sql);
             $game_id = $this->db->insert_id();
 
             foreach($data['winners'] as $i => $v) {
-                $sql = "INSERT INTO playerGames (playerID, gameID, result)
+                $sql = "INSERT INTO playerGame (playerID, gameID, result)
                     VALUES ($v, $game_id, 'W')";
-                echo $sql;
+                $this->db->query($sql);
             }
 
             foreach($data['losers'] as $i => $v) {
-                $sql = "INSERT INTO playerGames (playerID, gameID, result)
-                    VALUES ($v, $game_id, 'W')";
-                echo $sql;
+                $sql = "INSERT INTO playerGame (playerID, gameID, result)
+                    VALUES ($v, $game_id, 'L')";
+                $this->db->query($sql);
             }
         }
     }

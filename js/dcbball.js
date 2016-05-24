@@ -13,6 +13,16 @@ $(document).ready(function() {
         $("#yearform").submit();
     });
 
+    // FixMe: Make dynamic
+    /*$("#winners_1").on("click", function() {
+        var selectedValue = this.value;
+        if (!this.checked) {
+            $("#losers_1").removeAttr("disabled");
+        } else {
+            $("#losers_1").attr("disabled", true);
+        }
+    });*/
+
 });
 
 
