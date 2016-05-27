@@ -34,7 +34,7 @@ class Standings extends CI_Controller {
         $this->table->set_template($tmpl); 
         $this->table->set_heading('Name', 'Wins', 'Losses', 'GP', '%', "P/M", "P/M <br> Per Game",
             "Last <br> 10", "Current <br> Streak","Longest <br> Win Streak", "Longest <br> Lose Streak", "Last <br> Played");
-        krsort($players);
+        ksort($players);
         // go through player list and determine stats
         foreach($players as $player) {
             $name = $player['firstName'] . " " . $player['lastName'];

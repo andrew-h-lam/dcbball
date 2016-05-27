@@ -21,7 +21,7 @@ class Players_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('players');
         $this->db->where('active',$active);
-        $this->db->order_by('firstName', 'DESC');
+        $this->db->order_by('firstName, lastName', 'ASC');
         return $this->db->get()->result_array();
     }
 }
