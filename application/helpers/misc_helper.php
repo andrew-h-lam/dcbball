@@ -18,4 +18,8 @@ function year_dropdown($year) {
                             </select></form>";
 }
 
+
+function echoPre($array) {
+    echo "<pre>" . print_r($array,true) . "</pre>";
+}
 ?>
