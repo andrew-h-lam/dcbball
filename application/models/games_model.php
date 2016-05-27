@@ -10,9 +10,6 @@ class Games_model extends CI_Model {
     public function __construct() {
         parent::__construct();
         $this->load->database();
-        #$this->db = new MongoClient();
-        #$this->collection = $this->db->dcbball->games;
-
     }
 
     // get all games for a given year for game log; returns assoc array with game id as index
@@ -27,7 +24,7 @@ class Games_model extends CI_Model {
             $playerid_clause = " and players.id = $playerid";
         }
 
-        $this->db->select("lastName, firstName, games.id, gameDate, winScore, lossScore, result");
+        $this->db->select("lastName, firstName, players.id as 'player_id', games.id as 'game_id', gameDate, winScore, lossScore, result");
         $this->db->from("games join playerGame on gameID = games.id join players on players.id = playerID");
         $this->db->where("gameDate like '" . $year . "%' $playerid_clause");
         $this->db->order_by('games.id, result', 'DESC');
@@ -38,15 +35,20 @@ class Games_model extends CI_Model {
         $results_arr = array();
         for($i=0; $i<$res_size; $i++) {
 
-            $game_id = $res[$i]['id'];
-            $results_arr[$game_id]['id'] = $game_id;
+            $game_id = $res[$i]['game_id'];
+            $results_arr[$game_id]['game_id'] = $game_id;
             $results_arr[$game_id]['gameDate'] = $res[$i]['gameDate'];
             $results_arr[$game_id]['winScore'] = $res[$i]['winScore'];
             $results_arr[$game_id]['lossScore'] = $res[$i]['lossScore'];
             $fullname =  $res[$i]['firstName'] . " " . $res[$i]['lastName'];
-            if($res[$i]['result'] == "W") $results_arr[$game_id]["winners"][] = $fullname;
-            else $results_arr[$game_id]["losers"][] = $fullname;
-
+            if($res[$i]['result'] == "W") {
+                $results_arr[$game_id]["winners"][] = $fullname;
+                $results_arr[$game_id]["winner_ids"][] = $res[$i]["player_id"];
+            }
+            else {
+                $results_arr[$game_id]["losers"][] = $fullname;
+                $results_arr[$game_id]["loser_ids"][] = $res[$i]["player_id"];
+            }
         }
 
         return $results_arr;
