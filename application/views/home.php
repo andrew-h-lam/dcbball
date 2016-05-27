@@ -64,6 +64,12 @@
                         <span>Add Game</span>
                     </a>
                 </li>
+                <li>
+                    <a class="" href="matchups">
+                        <i class="icon_genius"></i>
+                        <span>Matchups</span>
+                    </a>
+                </li>
             </ul>
             <!-- sidebar menu end-->
         </div>
