@@ -18,16 +18,24 @@ class Matchups extends CI_Controller {
             $year = $this->session->userdata['year'];
         }
         else {
-            $year = data("Y");
+            $year = date("Y");
         }
 
         $this->session->set_userdata('year', $year);
 
+        $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="2" class="matchups">',
+            'row_start'  => '<tr class="standings_player">',
+            'row_end'    => '</tr>',
+            'row_alt_start'       => '<tr class="standings_player">',
+            'row_alt_end'         => '</tr>'
+        );
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Team 1', 'Record', 'Team 2');
+
         $games = $this->games_model->get_games($year);
 
         // get list of teams that played together
-        $teams_set1 = array();
-        $teams_set2 = array();
+        $teams_set1 = array();;
         foreach ($games as $i => $v) {
             sort($v['winner_ids']);
             sort($v['loser_ids']);
@@ -60,12 +68,7 @@ class Matchups extends CI_Controller {
                     }
                 }
                 if($wins != 0 && $losses != 0 ) {
-                    echo "START SERIES<BR>";
-                    echoPre($team1);
-                    echoPre($team2);
-                    echo $wins . " - " . $losses . "<br>";
-                    echo "END SERIES<BR>";
-
+                    $this->table->add_row(implode("<BR>", $team1), $wins . " - " . $losses, implode("<BR>", $team2));
                 }
             }
         }
