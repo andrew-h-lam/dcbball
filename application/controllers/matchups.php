@@ -26,7 +26,7 @@ class Matchups extends CI_Controller {
         $tmpl = array ( 'table_open'  => '<table border="1" cellpadding="2" cellspacing="2" class="matchups">',
             'row_start'  => '<tr class="standings_player">',
             'row_end'    => '</tr>',
-            'row_alt_start'       => '<tr class="standings_player">',
+            'row_alt_start'       => '<tr class="matchups">',
             'row_alt_end'         => '</tr>'
         );
         $this->table->set_template($tmpl);
@@ -61,13 +61,15 @@ class Matchups extends CI_Controller {
                     if ($teams_set1[$t1] == $v['winner_ids'] && $teams_set2[$t2] == $v['loser_ids']) {
                         $team1 = $v['winners'];
                         $wins++;
+                        if($wins > 1) $team2 = $v['losers'];
                     }
                     if ($teams_set1[$t1] == $v['loser_ids'] && $teams_set2[$t2] == $v['winner_ids']) {
                         $team2 = $v['winners'];
                         $losses++;
+                        if($losses > 1) $team1 = $v['winners'];
                     }
                 }
-                if($wins != 0 && $losses != 0 ) {
+                if($wins > 1 || $losses > 1 ) {
                     $this->table->add_row(implode("<BR>", $team1), $wins . " - " . $losses, implode("<BR>", $team2));
                 }
             }
