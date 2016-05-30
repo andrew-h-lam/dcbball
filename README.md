@@ -1,12 +1,16 @@
-To Do
+To Do:
 - Sortable standings
-- Sortable lineups
+- Add 1-week change
 - Edit game
+- Onclick grey out other names on form
+- Fix insert game queries
+- Calendar for date
+- Dropdown for game form score
+- Clean up game create form
+- Series Matchups breakdowns
+- Fix broken lineups
+- Sortable lineups
 - Remove repeated code
 - Clean up assets
-- Add 1-week change
-- Fix lineups
 - Put setYear module in a function
-- Series Matchups
-- Onclick grey out other names on form
-- Clean up game create
+- Change year to use GET
